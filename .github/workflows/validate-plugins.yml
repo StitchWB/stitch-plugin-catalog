@@ -1,0 +1,37 @@
+name: Validate plugins
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: validate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate community packages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout catalog
+        uses: actions/checkout@v4
+
+      - name: Checkout open-core app (parsers)
+        uses: actions/checkout@v4
+        with:
+          repository: WhiteBite/Stitch-Manager
+          path: app
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install app python deps
+        working-directory: app/python
+        run: pip install -e .
+
+      - name: Validate all packages
+        run: python scripts/validate_package.py
