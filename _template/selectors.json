@@ -1,0 +1,22 @@
+{
+  "email_input": [
+    {"kind": "testid", "value": "email", "weight": 1.0},
+    {"kind": "css", "value": "input[type=email]", "weight": 0.8},
+    {"kind": "attr", "value": "placeholder=Email address", "weight": 0.5}
+  ],
+  "password_input": [
+    {"kind": "testid", "value": "password", "weight": 1.0},
+    {"kind": "css", "value": "input[type=password]", "weight": 0.8},
+    {"kind": "attr", "value": "placeholder=Create password", "weight": 0.5}
+  ],
+  "signup_button": [
+    {"kind": "testid", "value": "signup-button", "weight": 1.0},
+    {"kind": "text", "value": "Sign up", "weight": 0.8},
+    {"kind": "css", "value": "button[type=submit]", "weight": 0.5}
+  ],
+  "welcome_message": [
+    {"kind": "testid", "value": "welcome-message", "weight": 1.0},
+    {"kind": "css", "value": "[data-testid=welcome-message]", "weight": 0.8},
+    {"kind": "css", "value": ".welcome-banner", "weight": 0.5}
+  ]
+}

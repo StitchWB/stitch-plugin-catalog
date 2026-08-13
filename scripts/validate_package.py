@@ -24,6 +24,7 @@ import json
 import re
 import sys
 from pathlib import Path
+from typing import get_args
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
@@ -36,7 +37,7 @@ except ImportError as exc:  # pragma: no cover
     print("Run from the app repo python/ dir or set PYTHONPATH.", file=sys.stderr)
     sys.exit(2)
 
-KNOWN_KINDS = {k.value if hasattr(k, "value") else str(k) for k in StepKind}
+KNOWN_KINDS = set(get_args(StepKind))
 
 CAPABILITY_PREFIXES = (
     "imap.otp",
@@ -97,7 +98,7 @@ def validate_package(pkg_dir: Path) -> list[str]:
                 if kind not in KNOWN_KINDS:
                     _fail(f"{pkg_dir}: unknown step kind {kind!r} (step {step.id})", errors)
                 for cand in step.selector_candidates:
-                    if not cand.get("kind") or not cand.get("value"):
+                    if not cand.kind or not cand.value:
                         _fail(
                             f"{pkg_dir}: step {step.id} has non-concrete candidate",
                             errors,

@@ -1,0 +1,28 @@
+{
+  "schema": "stitch.plugin/v1",
+  "id": "example-signup",
+  "name": "Example Signup (template)",
+  "version": "1.0.0",
+  "service": "example",
+  "kind": "data",
+  "engine": {
+    "min": "0.3.0",
+    "api": 2
+  },
+  "depends": [],
+  "entry": {
+    "scenario": "scenario.json",
+    "selectors": "selectors.json",
+    "profile": "profile.json"
+  },
+  "capabilities": [
+    "extract",
+    "account.save"
+  ],
+  "outputs": [
+    "account.email",
+    "account.password",
+    "account.session"
+  ],
+  "signature": ""
+}

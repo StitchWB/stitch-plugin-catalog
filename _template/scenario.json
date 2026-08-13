@@ -1,0 +1,90 @@
+{
+  "version": 2,
+  "name": "example-signup",
+  "created_at": "2026-08-13",
+  "steps": [
+    {
+      "id": "goto_signup",
+      "kind": "goto",
+      "tab_id": "main",
+      "url": "https://example.com/signup",
+      "selector_candidates": [],
+      "timeout_ms": 30000,
+      "retry": 1,
+      "sensitive": false
+    },
+    {
+      "id": "fill_email",
+      "kind": "fill",
+      "tab_id": "main",
+      "selector_candidates": [
+        {"kind": "testid", "value": "email", "weight": 1.0},
+        {"kind": "css", "value": "input[type=email]", "weight": 0.8},
+        {"kind": "attr", "value": "placeholder=Email address", "weight": 0.5}
+      ],
+      "value": "${account.email}",
+      "timeout_ms": 15000,
+      "retry": 2,
+      "sensitive": false
+    },
+    {
+      "id": "fill_password",
+      "kind": "fill",
+      "tab_id": "main",
+      "selector_candidates": [
+        {"kind": "testid", "value": "password", "weight": 1.0},
+        {"kind": "css", "value": "input[type=password]", "weight": 0.8},
+        {"kind": "attr", "value": "placeholder=Create password", "weight": 0.5}
+      ],
+      "value": "${account.password}",
+      "timeout_ms": 15000,
+      "retry": 2,
+      "sensitive": true
+    },
+    {
+      "id": "click_signup",
+      "kind": "click",
+      "tab_id": "main",
+      "selector_candidates": [
+        {"kind": "testid", "value": "signup-button", "weight": 1.0},
+        {"kind": "text", "value": "Sign up", "weight": 0.8},
+        {"kind": "css", "value": "button[type=submit]", "weight": 0.5}
+      ],
+      "timeout_ms": 10000,
+      "retry": 1,
+      "sensitive": false
+    },
+    {
+      "id": "extract_welcome",
+      "kind": "extract",
+      "tab_id": "main",
+      "selector_candidates": [
+        {"kind": "testid", "value": "welcome-message", "weight": 1.0},
+        {"kind": "css", "value": "[data-testid=welcome-message]", "weight": 0.8},
+        {"kind": "css", "value": ".welcome-banner", "weight": 0.5}
+      ],
+      "timeout_ms": 15000,
+      "retry": 0,
+      "sensitive": false,
+      "meta": {
+        "to": "welcome_text"
+      }
+    },
+    {
+      "id": "save_account",
+      "kind": "account.save",
+      "tab_id": "main",
+      "selector_candidates": [],
+      "timeout_ms": 10000,
+      "retry": 0,
+      "sensitive": true,
+      "meta": {
+        "outputs": [
+          "account.email",
+          "account.password",
+          "account.session"
+        ]
+      }
+    }
+  ]
+}

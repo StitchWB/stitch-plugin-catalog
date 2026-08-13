@@ -1,0 +1,43 @@
+{
+  "schema": "stitch.profile/v1",
+  "name": "example-signup-default",
+  "persona": {
+    "platform": "Win32",
+    "vendor": "Google Inc.",
+    "locale": "en-US",
+    "timezone": "America/New_York",
+    "timezone_offset": 300,
+    "screen": {
+      "width": 1920,
+      "height": 1080,
+      "avail_width": 1920,
+      "avail_height": 1040,
+      "color_depth": 32,
+      "pixel_ratio": 1.0
+    },
+    "hardware": {
+      "concurrency": 8,
+      "device_memory": 8,
+      "max_touch_points": 0
+    },
+    "webgl": {
+      "vendor": "Google Inc. (NVIDIA)",
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    "geolocation": {
+      "latitude": 40.7128,
+      "longitude": -74.006,
+      "accuracy": 50.0
+    },
+    "fonts": [
+      "Arial",
+      "Calibri",
+      "Consolas",
+      "Georgia",
+      "Segoe UI",
+      "Tahoma",
+      "Times New Roman",
+      "Verdana"
+    ]
+  }
+}

@@ -29,6 +29,34 @@ plugins/<id>/<version>/
 └── profile.json    # spoofer persona hints
 ```
 
+## Start from `_template/` / начните с `_template/`
+
+The repo ships a minimal, validator-passing starter plugin at
+[`_template/`](_template/) — copy it and edit the JSON.
+В репо есть минимальный шаблон-плагин в [`_template/](_template/) —
+скопируйте и отредактируйте JSON.
+
+```bash
+cp -r _template plugins/<your-id>/<your-version>
+# edit plugin.json (id, name, version, service, capabilities, outputs)
+# edit scenario.json (real URL, real selectors, real step flow)
+# edit selectors.json (mirror the selector groups your scenario uses)
+# edit profile.json (persona hints for your target service)
+```
+
+The template's [`README.md`](_template/README.md) explains every field,
+the StepKind v2 reference, selector candidate kinds, weight semantics,
+and value placeholders. It is a **template**, not a published plugin —
+it lives at the repo root (not under `plugins/`), so the catalog index
+and the no-argument CI validator skip it. Validate it explicitly:
+Шаблон — это **не опубликованный плагин**: он лежит в корне репо (не в
+`plugins/`), поэтому индекс и CI-валидатор без аргументов его пропускают.
+
+```bash
+python scripts/validate_package.py _template   # validate the template itself
+python scripts/validate_package.py plugins/<your-id>/<your-version>  # validate your copy
+```
+
 ## Authoring quick-start / как написать метод
 
 1. Install the open-source app; develop in `plugins-local/` with
