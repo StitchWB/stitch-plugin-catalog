@@ -1,0 +1,37 @@
+name: Validate catalog index
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: catalog-lint-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint catalog.json
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout catalog
+        uses: actions/checkout@v4
+
+      - name: Checkout open-core app (catalog-lint tool)
+        uses: actions/checkout@v4
+        with:
+          repository: WhiteBite/Stitch-Manager
+          path: app
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install catalog-lint tooling
+        working-directory: app/python
+        run: pip install -e .
+
+      - name: Lint catalog.json
+        run: python -m stitch_plugin_tools catalog-lint catalog.json

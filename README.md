@@ -18,6 +18,56 @@ makes PR review safe: there is nothing to execute, only a recipe to read.
 - Every PR is validated by CI (schema, known step kinds, concrete selectors,
   sensitive flags, capability whitelist, no secrets-looking literals).
 
+## Catalog index schema / схема индекса каталога
+
+The root [`catalog.json`](catalog.json) is a flat index of plugin entries.
+CI runs `catalog-lint` on every push and PR to validate it offline (no
+network, no fetching). Корневой [`catalog.json`](catalog.json) — плоский
+индекс записей плагинов; CI запускает `catalog-lint` на каждый push/PR
+(офлайн, без сети).
+
+```json
+{
+  "schema": "stitch.catalog/v1",
+  "plugins": [
+    {
+      "id": "my-plugin",
+      "version": "1.0.0",
+      "source": { "type": "git", "url": "https://github.com/owner/repo.git" }
+    },
+    {
+      "id": "another-plugin",
+      "version": "2.3.1",
+      "source": {
+        "type": "release",
+        "url": "https://github.com/owner/repo/releases/download/v2.3.1/plugin.zip",
+        "sha256": "abcdef0123456789...64hexchars"
+      }
+    },
+    { "id": "legacy-plugin", "version": "0.9.0" }
+  ]
+}
+```
+
+**Lint rules / правила проверки:**
+
+1. JSON must parse and be a dict with a `plugins` list.
+2. Each entry must have string `id` and string `version`.
+3. `version` must be semver (`MAJOR.MINOR.PATCH` with optional `-prerelease`).
+4. If `source` is present it must be an object with `type`:
+   - `git` — requires `url` (str).
+   - `release` — requires `url` (str) + `sha256` (hex64).
+   - Unknown `type` → error.
+5. Duplicate `id@version` pairs → error.
+6. Legacy entries (no `source`) are accepted for backward compatibility.
+
+Run locally / локально:
+
+```bash
+pip install git+https://github.com/WhiteBite/Stitch-Manager.git#subdirectory=python
+python -m stitch_plugin_tools catalog-lint catalog.json
+```
+
 ## Package layout / структура пакета
 
 ```
