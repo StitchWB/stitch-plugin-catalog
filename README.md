@@ -64,8 +64,9 @@ network, no fetching). Корневой [`catalog.json`](catalog.json) — пл�
 Run locally / локально:
 
 ```bash
-pip install git+https://github.com/WhiteBite/Stitch-Manager.git#subdirectory=python
-python -m stitch_plugin_tools catalog-lint catalog.json
+git clone https://github.com/WhiteBite/Stitch-Manager.git /tmp/sm
+pip install httpx cryptography
+PYTHONPATH=/tmp/sm/python python -m stitch_plugin_tools catalog-lint catalog.json
 ```
 
 ## Package layout / структура пакета
