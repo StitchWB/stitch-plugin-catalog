@@ -21,10 +21,10 @@ makes PR review safe: there is nothing to execute, only a recipe to read.
 ## Catalog index schema / схема индекса каталога
 
 The root [`catalog.json`](catalog.json) is a flat index of plugin entries.
-CI runs `catalog-lint` on every push and PR to validate it offline (no
-network, no fetching). Корневой [`catalog.json`](catalog.json) — плоский
-индекс записей плагинов; CI запускает `catalog-lint` на каждый push/PR
-(офлайн, без сети).
+CI runs `scripts/validate_catalog.py` on every push and PR to validate it
+offline (no network, no fetching, no external dependencies). Корневой
+[`catalog.json`](catalog.json) — плоский индекс записей плагинов; CI
+запускает `scripts/validate_catalog.py` на каждый push/PR (офлайн, без сети).
 
 ```json
 {
@@ -64,9 +64,7 @@ network, no fetching). Корневой [`catalog.json`](catalog.json) — пл�
 Run locally / локально:
 
 ```bash
-git clone https://github.com/WhiteBite/Stitch-Manager.git /tmp/sm
-pip install httpx cryptography
-PYTHONPATH=/tmp/sm/python python -m stitch_plugin_tools catalog-lint catalog.json
+python scripts/validate_catalog.py catalog.json
 ```
 
 ## Package layout / структура пакета

@@ -18,21 +18,10 @@ jobs:
       - name: Checkout catalog
         uses: actions/checkout@v4
 
-      - name: Checkout open-core app (catalog-lint tool)
-        uses: actions/checkout@v4
-        with:
-          repository: WhiteBite/Stitch-Manager
-          path: app
-
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      - name: Install catalog-lint dependencies
-        run: pip install httpx cryptography
-
       - name: Lint catalog.json
-        env:
-          PYTHONPATH: app/python
-        run: python -m stitch_plugin_tools catalog-lint catalog.json
+        run: python scripts/validate_catalog.py catalog.json
