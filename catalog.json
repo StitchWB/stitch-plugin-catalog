@@ -1,5 +1,15 @@
 {
   "schema": "stitch.catalog/v1",
-  "updated_at": "2026-08-29T00:42:49.586005+00:00",
-  "plugins": []
+  "updated_at": "2026-10-01T12:30:00.000000+00:00",
+  "plugins": [
+    {
+      "id": "stitch-devbox",
+      "version": "0.1.0",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/WhiteBite/remote-devbox-mcp",
+        "ref": "main"
+      }
+    }
+  ]
 }
