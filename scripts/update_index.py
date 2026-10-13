@@ -27,8 +27,23 @@ def _package_sha256(pkg_dir: Path) -> str:
     return hashlib.sha256("\n".join(lines).encode("utf-8")).hexdigest()
 
 
+def _existing_source_entries() -> list[dict]:
+    """Source-index entries survive rebuilds (hand/snapshot-managed)."""
+    out = REPO_ROOT / "catalog.json"
+    try:
+        raw = json.loads(out.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return []
+    return [
+        e
+        for e in raw.get("plugins", [])
+        if isinstance(e, dict) and isinstance(e.get("source"), dict)
+    ]
+
+
 def main() -> int:
-    plugins: list[dict] = []
+    plugins: list[dict] = _existing_source_entries()
+    seen = {(e.get("id"), e.get("version")) for e in plugins}
     for version_dir in sorted((REPO_ROOT / "plugins").glob("*/*")):
         if not version_dir.is_dir():
             continue
@@ -41,11 +56,14 @@ def main() -> int:
             continue
         services = [manifest.get("service", "")]
         services += [s for s in manifest.get("services", []) if s not in services]
+        key = (manifest.get("id", version_dir.parent.name), manifest.get("version", "0.0.0"))
+        if key in seen:
+            continue
         plugins.append(
             {
-                "id": manifest.get("id", version_dir.parent.name),
+                "id": key[0],
                 "name": manifest.get("name", manifest.get("id", "")),
-                "version": manifest.get("version", "0.0.0"),
+                "version": key[1],
                 "author": os.environ.get("CATALOG_AUTHOR", "community"),
                 "description": manifest.get("name", ""),
                 "path": version_dir.relative_to(REPO_ROOT).as_posix(),

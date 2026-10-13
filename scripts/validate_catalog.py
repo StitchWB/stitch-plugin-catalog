@@ -15,8 +15,13 @@ Rules (mirror catalog_lint.py exactly — do not diverge):
      - git: ``url`` required (str).
      - release: ``url`` required (str) + ``sha256`` required (hex64).
      - Unknown ``type`` → error.
-  5. Duplicate ``id`` + ``version`` pairs → error.
-  6. Legacy entries (no ``source``) are accepted (backward compat).
+   5. Duplicate ``id`` + ``version`` pairs → error.
+   6. Legacy entries (no ``source``) are accepted (backward compat).
+   7. ``source.url`` for git/release entries must live in a controlled org
+      (StitchWB/WhiteBite) — third-party upstreams are snapshotted via
+      ``catalog-snapshot`` and kept in the entry's ``upstream`` field.
+      Optional ``status`` ∈ {active, archived}; optional ``upstream`` object
+      requires ``type`` ∈ {git, release} + non-empty ``url``.
 
 Exit 0 on success, 1 on any error.
 """
@@ -30,6 +35,17 @@ from pathlib import Path
 from typing import Any
 
 _SEMVER_RE = re.compile(r"^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?$")
+
+# Install sources live in controlled orgs only: third-party authors deleting
+# repos must not break installs (originals belong in 'upstream').
+_CONTROLLED_ORG_PREFIXES = (
+    "https://github.com/StitchWB/",
+    "git@github.com:StitchWB/",
+    "https://github.com/WhiteBite/",
+    "git@github.com:WhiteBite/",
+)
+
+_ENTRY_STATUSES = ("active", "archived")
 
 
 def _is_hex64(s: str) -> bool:
@@ -72,6 +88,33 @@ def lint_entry(entry: Any) -> list[str]:
                     errors.append("release source 'sha256' must be hex64")
             else:
                 errors.append(f"unknown source type: {stype!r}")
+
+            url = source.get("url")
+            if stype in ("git", "release") and isinstance(url, str) and url:
+                if not url.startswith(_CONTROLLED_ORG_PREFIXES):
+                    errors.append(
+                        "source.url must be a controlled-org snapshot "
+                        "(StitchWB/WhiteBite); snapshot third-party upstreams via "
+                        "`stitch_plugin_tools catalog-snapshot` and keep the "
+                        "author URL in the 'upstream' field"
+                    )
+
+    status = entry.get("status")
+    if status is not None and status not in _ENTRY_STATUSES:
+        errors.append(
+            f"status must be one of {sorted(_ENTRY_STATUSES)}, got {status!r}"
+        )
+
+    upstream = entry.get("upstream")
+    if upstream is not None:
+        if (
+            not isinstance(upstream, dict)
+            or not isinstance(upstream.get("url"), str)
+            or not upstream.get("url")
+        ):
+            errors.append("upstream must be an object with a non-empty 'url'")
+        elif upstream.get("type") not in ("git", "release"):
+            errors.append("upstream 'type' must be 'git' or 'release'")
 
     return errors
 
