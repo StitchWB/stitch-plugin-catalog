@@ -75,7 +75,7 @@ plugins/<id>/<version>/
 │                   #   engine{min,api}, depends, capabilities, outputs
 ├── scenario.json   # ScenarioV2 steps + weighted selector_candidates
 ├── selectors.json  # named selector groups (selector-pack channel)
-└── profile.json    # spoofer persona hints
+└── profile.json    # browser environment profile
 ```
 
 ## Start from `_template/` / начните с `_template/`
@@ -114,8 +114,7 @@ python scripts/validate_package.py plugins/<your-id>/<your-version>  # validate 
    Разрабатывайте в `plugins-local/` с `STITCH_DEV_MODE=1`; падение даёт
    репорт **со скриншотом** (Настройки → Телеметрия) — чините по доказательству.
 2. Steps (StepKind v2): `goto click fill press waitFor assert manual.pause
-   proxy.switch extract branch imap.otp captcha.solve stripe.fill_checkout
-   account.save`.
+   proxy.switch extract branch imap.otp account.save`.
 3. Values: `${account.email}` `${account.password}` `${account.name}`
    `${verification_code}`; custom via `extract` → `to`.
 4. Selector candidates are weighted (1.0 = most specific):
