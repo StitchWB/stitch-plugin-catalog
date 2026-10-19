@@ -41,8 +41,6 @@ KNOWN_KINDS = set(get_args(StepKind))
 
 CAPABILITY_PREFIXES = (
     "imap.otp",
-    "captcha.solve",
-    "stripe.fill_checkout",
     "account.save",
     "extract",
     "branch",

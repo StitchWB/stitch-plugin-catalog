@@ -32,7 +32,7 @@ python scripts/validate_package.py plugins/<your-id>/<your-version>
 | `plugin.json`   | Manifest — identity, engine version, capabilities, outputs. |
 | `scenario.json` | ScenarioV2 steps — the registration recipe (goto → fill → click → extract → account.save). |
 | `selectors.json`| Named selector groups for the v1.1 selector-pack channel.    |
-| `profile.json`  | Spoofer persona hints (screen, hardware, WebGL, geolocation). |
+| `profile.json`  | Browser environment profile (screen, hardware, WebGL, geolocation). |
 
 ## What the template demonstrates
 
@@ -42,9 +42,8 @@ python scripts/validate_package.py plugins/<your-id>/<your-version>
 - **`entry`** — for `kind: "data"` the manifest must list `scenario`,
   `selectors`, and `profile` (all string filenames relative to the package dir).
 - **`capabilities`** — must be in the catalog whitelist prefixes:
-  `imap.otp`, `captcha.solve`, `stripe.fill_checkout`, `account.save`,
-  `extract`, `branch`, `totp.register`. The template uses `extract` and
-  `account.save`.
+  `imap.otp`, `account.save`, `extract`, `branch`, `totp.register`. The
+  template uses `extract` and `account.save`.
 - **`signature: ""`** — community plugins are unsigned. The empty string is
   the correct value; the app marks unsigned packages as `community` trust.
 - **`selector_candidates`** — every step that interacts with the page carries
@@ -67,8 +66,7 @@ Valid `kind` values in `scenario.json` steps:
 
 ```
 goto  click  fill  press  waitFor  assert  manual.pause  proxy.switch
-extract  branch  imap.otp  captcha.solve  stripe.fill_checkout
-totp.register  account.save  noop
+extract  branch  imap.otp  totp.register  account.save  noop
 ```
 
 Unknown kinds are tolerated (mapped to `noop` = skip-in-place), but the
