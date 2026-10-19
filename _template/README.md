@@ -15,7 +15,7 @@ cp -r _template plugins/<your-id>/<your-version>
 # then edit plugin.json → id, name, version, service, capabilities, outputs
 # edit scenario.json → real URL, real selectors, real step flow
 # edit selectors.json → mirror the selector groups your scenario uses
-# edit profile.json → persona hints for your target service
+# edit profile.json → browser environment profile for your target service
 ```
 
 After editing, validate locally (requires the open-core app repo on
