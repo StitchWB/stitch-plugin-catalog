@@ -60,17 +60,20 @@ python scripts/validate_package.py plugins/<your-id>/<your-version>
 - **`meta.outputs`** on `account.save` — documents which account fields the
   terminal step persists.
 
-## StepKind v2 reference
+## StepKind v2 allow-list
 
-Valid `kind` values in `scenario.json` steps:
+The only `kind` values the catalog validator accepts in `scenario.json`
+steps:
 
 ```
 goto  click  fill  press  waitFor  assert  manual.pause  proxy.switch
 extract  branch  imap.otp  totp.register  account.save  noop
 ```
 
-Unknown kinds are tolerated (mapped to `noop` = skip-in-place), but the
-catalog validator flags them — stick to the known kinds above.
+Any other kind is a **validation error** — the PR is rejected. The engine
+maps unknown kinds to `noop` (skip-in-place) at runtime, but that runtime
+tolerance does not extend to the catalog: engine-reserved kinds ship only
+in the signed gated channel, never as community data.
 
 ## Value templates
 
