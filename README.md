@@ -15,8 +15,9 @@ makes PR review safe: there is nothing to execute, only a recipe to read.
   Методы комьюнити ставятся **без токена**, в приложении помечены `community`.
 - Official gated methods (signed, telemetry, kill-switch) live in the private
   distribution channel, not here. Официальные методы — в закрытом канале.
-- Every PR is validated by CI (schema, known step kinds, concrete selectors,
-  sensitive flags, capability whitelist, no secrets-looking literals).
+- Every PR is validated by CI (schema, allow-listed step kinds, concrete
+  selectors, sensitive flags, capability whitelist, no secrets-looking
+  literals).
 
 ## Catalog index schema / схема индекса каталога
 
@@ -113,8 +114,10 @@ python scripts/validate_package.py plugins/<your-id>/<your-version>  # validate 
    screenshot** (Settings → Telemetry) — fix selectors from evidence.
    Разрабатывайте в `plugins-local/` с `STITCH_DEV_MODE=1`; падение даёт
    репорт **со скриншотом** (Настройки → Телеметрия) — чините по доказательству.
-2. Steps (StepKind v2): `goto click fill press waitFor assert manual.pause
-   proxy.switch extract branch imap.otp account.save`.
+2. Steps (StepKind v2 allow-list): `goto click fill press waitFor assert
+   manual.pause proxy.switch extract branch imap.otp totp.register
+   account.save noop`. Any other `kind` is a validation error —
+   engine-reserved kinds ship only in the signed gated channel.
 3. Values: `${account.email}` `${account.password}` `${account.name}`
    `${verification_code}`; custom via `extract` → `to`.
 4. Selector candidates are weighted (1.0 = most specific):

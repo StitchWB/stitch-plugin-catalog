@@ -11,7 +11,9 @@ from the app repo's python/ dir or set PYTHONPATH).
 Checks per package:
   * plugin.json passes autoreg.plugin.manifest.validate_manifest, kind=data,
     engine.api <= 2
-  * scenario.json parses via parse_scenario_v2 with KNOWN StepKind values only
+  * scenario.json steps use only allow-listed community step kinds
+    (ALLOWED_STEP_KINDS); anything else — including engine-reserved kinds —
+    is an error
   * every selector_candidates entry is concrete (kind + non-empty value)
   * fill steps templating ${account.password} are marked sensitive
   * capabilities are within the whitelist prefixes
@@ -24,20 +26,36 @@ import json
 import re
 import sys
 from pathlib import Path
-from typing import get_args
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
 try:
     from autoreg.plugin.manifest import validate_manifest
     from autoreg.scenario.parse_v2 import parse_scenario_v2
-    from autoreg.scenario.schema import StepKind
 except ImportError as exc:  # pragma: no cover
     print(f"FATAL: cannot import autoreg parsers ({exc}).", file=sys.stderr)
     print("Run from the app repo python/ dir or set PYTHONPATH.", file=sys.stderr)
     sys.exit(2)
 
-KNOWN_KINDS = set(get_args(StepKind))
+# Intentionally narrower than the engine's StepKind: reserved kinds ship only in the signed gated channel.
+ALLOWED_STEP_KINDS = frozenset(
+    {
+        "goto",
+        "click",
+        "fill",
+        "press",
+        "waitFor",
+        "assert",
+        "manual.pause",
+        "proxy.switch",
+        "extract",
+        "branch",
+        "imap.otp",
+        "totp.register",
+        "account.save",
+        "noop",
+    }
+)
 
 CAPABILITY_PREFIXES = (
     "imap.otp",
@@ -85,6 +103,22 @@ def validate_package(pkg_dir: Path) -> list[str]:
         _fail(f"{pkg_dir}: missing {scenario_path.name}", errors)
     else:
         sraw = json.loads(scenario_path.read_text(encoding="utf-8"))
+        raw_steps = sraw.get("steps") if isinstance(sraw, dict) else None
+        if isinstance(raw_steps, list):
+            for i, raw_step in enumerate(raw_steps):
+                if not isinstance(raw_step, dict):
+                    continue
+                kind = raw_step.get("kind")
+                if not isinstance(kind, str):
+                    continue
+                if kind.strip().lower() not in ALLOWED_STEP_KINDS:
+                    sid = raw_step.get("id")
+                    label = sid if isinstance(sid, str) and sid else f"index {i}"
+                    _fail(
+                        f"{pkg_dir}: step kind {kind.strip()!r} not in the "
+                        f"community allow-list (step {label})",
+                        errors,
+                    )
         try:
             scenario = parse_scenario_v2(sraw)
         except Exception as exc:
@@ -93,8 +127,6 @@ def validate_package(pkg_dir: Path) -> list[str]:
         if scenario is not None:
             for step in scenario.steps:
                 kind = step.kind.value if hasattr(step.kind, "value") else str(step.kind)
-                if kind not in KNOWN_KINDS:
-                    _fail(f"{pkg_dir}: unknown step kind {kind!r} (step {step.id})", errors)
                 for cand in step.selector_candidates:
                     if not cand.kind or not cand.value:
                         _fail(
