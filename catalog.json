@@ -1,6 +1,6 @@
 {
   "schema": "stitch.catalog/v1",
-  "updated_at": "2026-10-19T20:30:06.602620+00:00",
+  "updated_at": "2026-10-20T00:47:50.650221+00:00",
   "plugins": [
     {
       "id": "stitch-devbox",
