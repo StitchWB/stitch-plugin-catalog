@@ -5,6 +5,7 @@
     {
       "id": "stitch-devbox",
       "version": "0.1.0",
+      "status": "archived",
       "source": {
         "type": "git",
         "url": "https://github.com/WhiteBite/remote-devbox-mcp",
